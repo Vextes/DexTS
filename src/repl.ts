@@ -5,10 +5,10 @@ export function cleanInput(input: string): string[] {
     return words;
 }
 
-export function startREPL(state: State) {
+export async function startREPL(state: State) {
     state.readline.prompt();
 
-    state.readline.on("line", (line: string) => {
+    state.readline.on("line", async (line: string) => {
         const cleanLine = cleanInput(line);
         if (cleanLine.length > 0) {
             const commandCalled = cleanLine[0];
@@ -18,7 +18,7 @@ export function startREPL(state: State) {
                 console.log(`Command not found: ${commandCalled}`);
             } else {
                 try {
-                    foundCommand.callback(state);
+                     await foundCommand.callback(state);
                 } catch (err) {
                     console.log(`Error during command execution: ${err}`)
                 }
