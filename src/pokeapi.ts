@@ -1,4 +1,5 @@
-import { Cache } from "./pokecache";
+import { DeepLocation, ShallowLocations } from "./api_types.js";
+import { Cache } from "./pokecache.js";
 
 export class PokeAPI {
   private static readonly baseURL = "https://pokeapi.co/api/v2";
@@ -42,16 +43,16 @@ export class PokeAPI {
     }
   }
 
-  async fetchLocation(locationName: string): Promise<Location> {
-    const locAreaExtension = "/location-area"
+  async fetchLocation(locationDescriptor: string): Promise<DeepLocation> {
+    const locAreaExtension = `/location-area/${locationDescriptor}`
     const fullUrl = PokeAPI.baseURL + locAreaExtension;
 
     // check if data at fullUrl is already cached
-    const cacheCheck = this.cache.get<Location>(fullUrl);
+    const cacheCheck = this.cache.get<DeepLocation>(fullUrl);
     if (cacheCheck) {
       return cacheCheck;
     }
-
+    console.log(fullUrl)
     //data is not cached, need to fetch from API
     try {
       const response = await fetch(fullUrl, {
@@ -62,7 +63,7 @@ export class PokeAPI {
         throw new Error(`Response status: ${response.status}`)
       }
 
-      const result: Location = await response.json();
+      const result: DeepLocation = await response.json();
       this.cache.add(fullUrl, result);
       return result;
     } catch (error: unknown) {
@@ -75,16 +76,4 @@ export class PokeAPI {
       }
     }
   }
-};
-
-export type ShallowLocations = {
-  count: number;
-  next: string;
-  previous: any;
-  results: Location[];
-};
-
-export type Location = {
-  name: string;
-  url: string;
 };

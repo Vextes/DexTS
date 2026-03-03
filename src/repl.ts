@@ -12,13 +12,14 @@ export async function startREPL(state: State) {
         const cleanLine = cleanInput(line);
         if (cleanLine.length > 0) {
             const commandCalled = cleanLine[0];
+            const args = cleanLine.slice(1);
             const allCommands = state.commands;
             let foundCommand = allCommands[commandCalled];
             if (!foundCommand) {
                 console.log(`Command not found: ${commandCalled}`);
             } else {
                 try {
-                     await foundCommand.callback(state);
+                     await foundCommand.callback(state, ...args);
                 } catch (err) {
                     console.log(`Error during command execution: ${err}`)
                 }
