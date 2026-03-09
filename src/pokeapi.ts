@@ -76,4 +76,8 @@ export class PokeAPI {
       }
     }
   }
+
+  async encounterPokemon(pokemonDescriptor: string) {
+
+  }
 };
