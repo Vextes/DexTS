@@ -8,7 +8,8 @@ export async function commandCatch(state: State, ...args: string[]): Promise<voi
     const pkmnToCatch = args[0];
     const foundPokemon = await state.pokeapi.encounterPokemon(pkmnToCatch);
     console.log(`Throwing a Pokeball at ${foundPokemon.name}...`);
-    const catchChance = (256 - foundPokemon.base_experience) / 256;
+    let catchChance = (256 - foundPokemon.base_experience) / 256;
+    catchChance = catchChance > 0.05 ? catchChance : 0.05;
     const isCaught = Math.random() < catchChance;
     if (isCaught) {
         state.pokedex[foundPokemon.name] = foundPokemon;

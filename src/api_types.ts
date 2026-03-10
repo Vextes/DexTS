@@ -73,6 +73,14 @@ export type Pokemon = {
     name: string;
     url: string;
   }
+  stats: {
+    base_stat: number;
+    effort: number;
+    stat: {
+      name: string;
+      url: string;
+    }
+  }[]
   types: {
     slot: number;
     type: {
@@ -80,4 +88,5 @@ export type Pokemon = {
       url: string;
     }
   }[]
+  weight: number;
 };
