@@ -1,9 +1,9 @@
-import { DeepLocation, ShallowLocations } from "./api_types.js";
+import { DeepLocation, Pokemon, ShallowLocations } from "./api_types.js";
 import { Cache } from "./pokecache.js";
 
 export class PokeAPI {
   private static readonly baseURL = "https://pokeapi.co/api/v2";
-  private cache: Cache
+  private cache: Cache;
 
   constructor() {
     const cacheInterval = 1000 * 60 * 5; // 1000ms per sec * 60 sec per min * 5 min
@@ -44,7 +44,7 @@ export class PokeAPI {
   }
 
   async fetchLocation(locationDescriptor: string): Promise<DeepLocation> {
-    const locAreaExtension = `/location-area/${locationDescriptor}`
+    const locAreaExtension = `/location-area/${locationDescriptor}`;
     const fullUrl = PokeAPI.baseURL + locAreaExtension;
 
     // check if data at fullUrl is already cached
@@ -52,7 +52,6 @@ export class PokeAPI {
     if (cacheCheck) {
       return cacheCheck;
     }
-    console.log(fullUrl)
     //data is not cached, need to fetch from API
     try {
       const response = await fetch(fullUrl, {
@@ -77,7 +76,36 @@ export class PokeAPI {
     }
   }
 
-  async encounterPokemon(pokemonDescriptor: string) {
+  async encounterPokemon(pokemonDescriptor: string): Promise<Pokemon> {
+    const pokemonExtension = `/pokemon/${pokemonDescriptor}`;
+    const fullUrl = PokeAPI.baseURL + pokemonExtension;
 
+    // check if data at fullUrl is already cached
+    const cacheCheck = this.cache.get<Pokemon>(fullUrl);
+    if (cacheCheck) {
+      return cacheCheck;
+    }
+    //data is not cached, need to fetch from API
+    try {
+      const response = await fetch(fullUrl, {
+        method: "GET",
+        mode: "cors",
+      });
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`)
+      }
+
+      const result: Pokemon = await response.json();
+      this.cache.add(fullUrl, result);
+      return result;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        throw new Error(error.message);
+      } else {
+        console.error(error);
+        throw new Error(`${error}`);
+      }
+    }
   }
 };

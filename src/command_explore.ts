@@ -1,7 +1,6 @@
 import { State } from "./state";
 
 export async function commandExplore(state: State, ...args: string[]) {
-    console.log(`start exp cmd: ${args}`)
     if (args.length === 0) {
         console.log(`Please enter a location name or id to explore.`);
         return;
